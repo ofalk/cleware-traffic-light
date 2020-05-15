@@ -6,7 +6,10 @@ import usb.util
 
 from traffic_light.error import TrafficLightError, MultipleTrafficLightsError
 
-CTRL_ENDPOINT = 0x02
+BM_REQUEST_TYPE = 0x21
+B_REQUEST = 0x09
+W_VALUE = 0x200
+W_INDEX = 0x00
 ID_VENDOR = 0x0d50
 ID_PRODUCT = 0x0008
 INTERFACE = 0
@@ -87,7 +90,7 @@ class ClewareTrafficLight:
         """
         try:
             self.detach()
-            self.device.write(CTRL_ENDPOINT, [0x00, color, value], timeout=timeout)
+            self.device.ctrl_transfer(BM_REQUEST_TYPE, B_REQUEST, W_VALUE, W_INDEX, [0x00, color, value], timeout=timeout)
         except Exception as exc:
             raise TrafficLightError(str(exc)) from exc
         finally:
